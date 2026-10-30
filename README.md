@@ -1,6 +1,6 @@
 # Escritório Mindness
 
-Sala isométrica em pixel art para ver o que os bots do Gabriel estão fazendo. Não existe API pública do Grok Bot para listar bots ou status, e este projeto não inventa uma nem faz scraping. Quem empurra o estado é o próprio bot, com um `POST` no fim da tarefa (e, se quiser, outro no começo).
+Sala isométrica low-poly para ver o que os bots do Gabriel estão fazendo. Os móveis são do Furniture Kit do Kenney (CC0); veja [CREDITS.md](CREDITS.md). Não existe API pública do Grok Bot para listar bots ou status, e este projeto não inventa uma nem faz scraping. Quem empurra o estado é o próprio bot, com um `POST` no fim da tarefa (e, se quiser, outro no começo).
 
 O escritório só mostra o que foi reportado. Sem ping, o bot aparece dormindo.
 
@@ -34,7 +34,7 @@ O escritório deriva o resto:
 - último ping há mais de **15 minutos** → **idle**
 - bot com `area` do tipo `home` → **home office**, mesmo que alguém poste um status
 
-O contador **Trabalhando** soma codando, navegando, no terminal e pensando. **Mesas livres** é a capacidade das salas menos os bots sentados nelas.
+Na tela, `working` e `terminal` aparecem como **Trabalhando**, `browsing` como **Pesquisando**, `thinking` como **Pensando**, `needs_you` como **Precisa de você**, `error` como **Erro**, `done` como **Concluído** e `idle` como **Parado**. O contador **Trabalhando** soma trabalhando, pesquisando e pensando. **Mesas livres** é a capacidade das salas menos os bots sentados nelas.
 
 ## Um ping por tarefa
 

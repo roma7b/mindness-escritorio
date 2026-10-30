@@ -4,6 +4,7 @@ import {
   IDLE_AFTER_MS,
   SLEEP_AFTER_MS,
   ACTIVITY_LIMIT,
+  STATUS_META,
   applyDecision,
   applyReport,
   catalog,
@@ -17,6 +18,14 @@ import {
 import { parseLog } from "./log-parse";
 
 const NOW = Date.parse("2026-10-30T18:00:00-03:00");
+
+test("rótulos visíveis ficam em português, sem jargão de programação", () => {
+  const labels = Object.values(STATUS_META).map((item) => item.label);
+  assert.equal(labels.some((label) => /codand|terminal|navegando|^idle$|^feito$/i.test(label)), false);
+  for (const label of ["Trabalhando", "Pesquisando", "Pensando", "Precisa de você", "Erro", "Concluído", "Parado", "Dormindo"]) {
+    assert.equal(labels.includes(label), true, label);
+  }
+});
 
 test("catálogo separa chief, prospecção e home office", () => {
   assert.deepEqual(lintCatalog(catalog), []);

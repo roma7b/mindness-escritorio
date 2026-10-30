@@ -113,16 +113,16 @@ export const catalog = rawCatalog as Catalog;
 const ACTIVE = new Set<EffectiveStatus>(["working", "browsing", "terminal", "thinking"]);
 
 export const STATUS_META: Record<EffectiveStatus, { label: string; color: string }> = {
-  working: { label: "Codando", color: "#3dd68c" },
-  browsing: { label: "Navegando", color: "#58a6ff" },
-  terminal: { label: "No terminal", color: "#3dbea5" },
-  thinking: { label: "Pensando", color: "#c9a0ff" },
-  needs_you: { label: "Precisa de você", color: "#ffb020" },
+  working: { label: "Trabalhando", color: "#3ddc84" },
+  browsing: { label: "Pesquisando", color: "#4c9dff" },
+  terminal: { label: "Trabalhando", color: "#3ddc84" },
+  thinking: { label: "Pensando", color: "#b388ff" },
+  needs_you: { label: "Precisa de você", color: "#ff9f1a" },
   error: { label: "Erro", color: "#ff5d5d" },
-  done: { label: "Feito", color: "#7dcea0" },
-  idle: { label: "Idle", color: "#9aa4b8" },
-  sleeping: { label: "Dormindo", color: "#8b93b0" },
-  home_office: { label: "Home office", color: "#d7b48a" },
+  done: { label: "Concluído", color: "#7dcea0" },
+  idle: { label: "Parado", color: "#9aa4b8" },
+  sleeping: { label: "Dormindo", color: "#8b93c7" },
+  home_office: { label: "Home office", color: "#e0b07a" },
 };
 
 export function emptyState(): OfficeState {

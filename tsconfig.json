@@ -9,6 +9,7 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
     "types": ["vite/client", "node"],
     "noUnusedLocals": true,
     "noUnusedParameters": true,
