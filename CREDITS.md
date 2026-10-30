@@ -11,17 +11,18 @@ Modelos low-poly usados na sala. Licença **Creative Commons Zero (CC0 1.0)**:
 
 O crédito ao Kenney não é obrigatório. Está aqui mesmo assim.
 
-O arquivo servido pelo app é `public/models/furniture.glb` (cerca de 320 KB), um recorte do pacote. Ficou abaixo do limite de 3 MB, então não foi comprimido com Draco: o decodificador pesaria mais do que o arquivo.
+O arquivo servido pelo app é `public/models/furniture.glb` (cerca de 380 KB), um recorte do pacote. Ficou abaixo do limite de 3 MB, então não foi comprimido com Draco: o decodificador pesaria mais do que o arquivo.
 
 Modelos incluídos:
 
 - `desk`, `deskCorner`, `chairDesk`
 - `computerScreen`, `computerKeyboard`, `laptop`
 - `bookcaseOpen`, `books`
-- `plantSmall1`, `plantSmall2`, `pottedPlant`
+- `plantSmall1`, `plantSmall2`, `plantSmall3`, `pottedPlant`
 - `loungeSofaLong`, `loungeChair`, `tableCoffee`
 - `lampRoundFloor`, `lampRoundTable`
 - `rugRounded`, `sideTable`
+- `kitchenCoffeeMachine`, `cardboardBoxClosed`, `cardboardBoxOpen`, `speakerSmall`
 - `wall`, `wallWindow`, `wallCorner`, `wallDoorway`, `doorwayOpen`, `floorFull`
 
 ## Feito neste projeto
@@ -30,5 +31,5 @@ Não vem do Kenney:
 
 - bonequinhos blob, olhos e animações
 - casinhas do home office
-- letreiros de neon, relógio, quadro branco, canecas e placa de saída
+- letreiros de neon, relógio, quadro branco, quadros de parede, bebedouro, canecas e placa de saída
 - interface, ícones e a tipografia Nunito (SIL Open Font License)

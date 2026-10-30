@@ -1,6 +1,7 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Component, Suspense, useLayoutEffect, useMemo, useRef, type ReactNode } from "react";
 import { ACESFilmicToneMapping, CanvasTexture, type Group, type OrthographicCamera } from "three";
+import { desksIn, moveItem, type LayoutItem } from "../../shared/layout";
 import { STATUS_META, type EffectiveStatus, type OfficeView, type TimeOfDay } from "../../shared/office";
 import { Piece } from "./furniture";
 
@@ -13,7 +14,12 @@ type SceneProps = {
   sway: boolean;
   tall: boolean;
   reduced: boolean;
+  editing: boolean;
+  items: LayoutItem[];
+  picked: string | null;
   onSelect: (id: string) => void;
+  onPick: (id: string | null) => void;
+  onItems: (items: LayoutItem[]) => void;
 };
 
 const SKY: Record<TimeOfDay, { sky: string; sun: string; plaster: string; ground: string; exposure: number; sunY: number }> = {
@@ -36,18 +42,18 @@ function CameraRig({ sway, tall }: { sway: boolean; tall: boolean }) {
   const base = useRef({ x: 12, y: 11, z: 12 });
   useLayoutEffect(() => {
     const aspect = size.width / Math.max(1, size.height);
-    const zoom = Math.min(size.width, size.height) / (tall || aspect < 0.9 ? 15 : 10.5);
-    base.current = tall ? { x: 16, y: 18, z: 16 } : { x: 18, y: 16, z: 18 };
+    const zoom = Math.min(size.width, size.height) / (tall || aspect < 0.9 ? 10.2 : 7.6);
+    base.current = tall ? { x: 15.2, y: 16, z: 15.2 } : { x: 15.8, y: 13.6, z: 15.8 };
     camera.zoom = zoom;
     camera.position.set(base.current.x, base.current.y, base.current.z);
-    camera.lookAt(6, 0.8, 3.6);
+    camera.lookAt(5.7, 0.45, 3.3);
     camera.updateProjectionMatrix();
   }, [camera, size.height, size.width, tall]);
   useFrame((state) => {
     if (!sway) return;
     const t = state.clock.elapsedTime;
     camera.position.x = base.current.x + Math.sin(t * 0.16) * 0.7;
-    camera.lookAt(5.2, 0.7, 3.1);
+    camera.lookAt(5.7, 0.45, 3.3);
     camera.updateProjectionMatrix();
   });
   return null;
@@ -278,19 +284,17 @@ function Mug({ position }: { position: [number, number, number] }) {
 }
 
 function Workstation({
-  position,
   status,
   big,
   time,
 }: {
-  position: [number, number, number];
   status: EffectiveStatus | "empty";
   big?: boolean;
   time: TimeOfDay;
 }) {
-  const scale = big ? 1.28 : 1;
+  const scale = big ? 1.12 : 1;
   return (
-    <group position={position}>
+    <group>
       <Piece name={big ? "deskCorner" : "desk"} scale={scale} />
       <Piece name="chairDesk" position={[0, 0, big ? 0.85 : 0.62]} scale={big ? 1.05 : 0.92} />
       <Piece name="computerScreen" position={[big ? 0.15 : 0.05, 0, big ? -0.15 : -0.12]} scale={big ? 1.15 : 1} />
@@ -391,21 +395,80 @@ function Blob({
   );
 }
 
-function Diorama({ view, time, selected, reduced, onSelect }: Omit<SceneProps, "sway" | "tall">) {
+const FRAME_COLORS = ["#7eb6ff", "#ffb4c8", "#ffe08a", "#9be7c4"];
+
+function Frame({ tint }: { tint: string }) {
+  return (
+    <group position={[0, 1.2, 0]}>
+      <mesh>
+        <boxGeometry args={[0.5, 0.36, 0.04]} />
+        <meshStandardMaterial color="#f6f1e6" />
+      </mesh>
+      <mesh position={[0, 0, 0.025]}>
+        <planeGeometry args={[0.36, 0.22]} />
+        <meshStandardMaterial color={tint} />
+      </mesh>
+    </group>
+  );
+}
+
+function Whiteboard() {
+  return (
+    <group position={[0, 1.02, 0]}>
+      <mesh>
+        <planeGeometry args={[1, 0.62]} />
+        <meshStandardMaterial color="#f7f4ea" roughness={0.9} />
+      </mesh>
+      {["#ffd27a", "#8ecbff", "#f5a3b5"].map((color, index) => (
+        <mesh key={color} position={[-0.22 + (index % 2) * 0.38, 0.12 - Math.floor(index / 2) * 0.24, 0.02]}>
+          <planeGeometry args={[0.2, 0.14]} />
+          <meshStandardMaterial color={color} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function Cooler() {
+  return (
+    <group>
+      <mesh position={[0, 0.42, 0]} castShadow>
+        <boxGeometry args={[0.32, 0.84, 0.28]} />
+        <meshStandardMaterial color="#d5e2ea" />
+      </mesh>
+      <mesh position={[0, 0.22, 0.15]}>
+        <boxGeometry args={[0.08, 0.08, 0.04]} />
+        <meshStandardMaterial color="#8eb4c4" />
+      </mesh>
+    </group>
+  );
+}
+
+function Diorama({
+  view,
+  time,
+  selected,
+  reduced,
+  editing,
+  items,
+  picked,
+  onSelect,
+  onPick,
+  onItems,
+}: Omit<SceneProps, "sway" | "tall">) {
   const look = SKY[time];
   const plaster = look.plaster;
   const prospect = view.bots.filter((bot) => bot.area === "prospeccao");
   const chief = view.bots.find((bot) => bot.area === "chief");
   const home = view.bots.filter((bot) => bot.areaKind === "home");
-  const slots: Array<[number, number]> = [
-    [2.35, 1.85],
-    [4.15, 1.85],
-    [5.95, 1.85],
-    [2.35, 3.7],
-    [4.15, 3.7],
-    [5.95, 3.7],
-  ];
+  const prospectDesks = desksIn(items, "prospeccao");
+  const dragging = useRef<string | null>(null);
   const lamps = time !== "day";
+  const botFor = (item: LayoutItem) => {
+    if (item.kind === "desk") return prospect[prospectDesks.findIndex((desk) => desk.id === item.id)];
+    if (item.kind === "deskCorner") return chief;
+    return undefined;
+  };
   return (
     <group>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[6.2, -0.03, 4.2]} receiveShadow>
@@ -417,70 +480,75 @@ function Diorama({ view, time, selected, reduced, onSelect }: Omit<SceneProps, "
       <RoomShell origin={[8.35, 0.45]} cols={3} rows={3} plaster={plaster} floor={time === "night" ? "#7a5434" : time === "evening" ? "#e0a860" : "#f0c892"} windows={[1]} doorway />
       <SkyWindows origin={[8.35, 0.45]} cols={[1]} time={time} />
 
-      <Piece name="bookcaseOpen" position={[0.55, 0, 2.15]} rotation={[0, Math.PI / 2, 0]} />
-      <Piece name="books" position={[0.42, 0.55, 1.7]} rotation={[0, 0.4, 0]} scale={0.8} />
-      <Piece name="books" position={[0.42, 1.15, 2.35]} rotation={[0, -0.2, 0]} scale={0.8} />
-      <Piece name="rugRounded" position={[1.15, 0, 5.15]} scale={0.72} />
-      <Piece name="loungeSofaLong" position={[1.15, 0, 5.35]} rotation={[0, Math.PI, 0]} scale={0.82} />
-      <Piece name="tableCoffee" position={[1.2, 0, 4.35]} scale={0.55} />
-      <Piece name="pottedPlant" position={[0.55, 0, 5.7]} scale={0.7} />
-      <Piece name="plantSmall2" position={[7.35, 0, 0.55]} scale={1.3} />
-      <Neon text="prospecção" position={[4, 1.72, 0.12]} color="#ff7eb6" />
-      <Clock position={[6.35, 1.55, 0.12]} />
-      <mesh position={[5.15, 1.15, 0.1]}>
-        <planeGeometry args={[1.15, 0.72]} />
-        <meshStandardMaterial color="#f7f4ea" roughness={0.9} />
-      </mesh>
-      {["#ffd27a", "#8ecbff", "#f5a3b5"].map((color, index) => (
-        <mesh key={color} position={[4.85 + (index % 2) * 0.38, 1.28 - Math.floor(index / 2) * 0.28, 0.12]}>
-          <planeGeometry args={[0.22, 0.16]} />
-          <meshStandardMaterial color={color} />
+      <Neon text="prospecção" position={[4, 1.82, 0.16]} color="#ff7eb6" />
+      <Clock position={[7.25, 1.55, 0.16]} />
+      <Neon text="chief" position={[9.15, 1.78, 0.62]} color="#ff5ea8" />
+      <group
+        onPointerMove={(event) => {
+          if (!dragging.current) return;
+          const next = moveItem(items, dragging.current, event.point.x, event.point.z);
+          if (next) onItems(next);
+        }}
+        onPointerUp={() => {
+          dragging.current = null;
+        }}
+      >
+        {editing ? <gridHelper args={[16, 40, "#c9a06a", "#e7d3a4"]} position={[6.2, 0.04, 4.2]} /> : null}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[6.2, 0.02, 4]}>
+          <planeGeometry args={[24, 18]} />
+          <meshBasicMaterial transparent opacity={0} depthWrite={false} />
         </mesh>
-      ))}
-
-      {slots.map(([x, z], index) => {
-        const bot = prospect[index];
-        return (
-          <group key={`desk-${index}`}>
-            <Workstation position={[x, 0, z]} status={bot?.status ?? "empty"} time={time} />
-            {bot ? (
-              <group position={[x, 0, z + 0.95]}>
-                <Blob
-                  color={bot.color}
-                  status={bot.status}
-                  reduced={reduced}
-                  label={bot.short}
-                  note={bot.note}
-                  selected={bot.id === selected}
-                  onClick={() => onSelect(bot.id)}
-                />
-              </group>
-            ) : null}
-          </group>
-        );
-      })}
-
-      <Piece name="rugRounded" position={[10.7, 0, 2.7]} scale={0.85} />
-      <Workstation position={[10.75, 0, 2.55]} status={chief?.status ?? "empty"} big time={time} />
-      {chief ? (
-        <group position={[10.75, 0, 3.65]}>
-          <Blob
-            color={chief.color}
-            status={chief.status}
-            reduced={reduced}
-            label={chief.short}
-            note={chief.note}
-            selected={chief.id === selected}
-            onClick={() => onSelect(chief.id)}
-          />
-        </group>
-      ) : null}
-      <Piece name="bookcaseOpen" position={[8.7, 0, 1.3]} rotation={[0, Math.PI / 2, 0]} scale={0.85} />
-      <Piece name="pottedPlant" position={[12.55, 0, 1.05]} scale={0.75} />
-      <Piece name="lampRoundFloor" position={[12.45, 0, 3.55]} />
-      <Piece name="sideTable" position={[9.15, 0, 3.9]} scale={0.55} />
-      <Piece name="lampRoundTable" position={[9.15, 0.45, 3.9]} scale={0.8} />
-      <Neon text="chief" position={[10.7, 1.7, 0.58]} color="#ff5ea8" />
+        {items.map((item, index) => {
+          const bot = botFor(item);
+          return (
+            <group
+              key={item.id}
+              position={[item.x, item.y ?? 0, item.z]}
+              rotation={[0, (item.rot * Math.PI) / 180, 0]}
+              scale={item.scale ?? 1}
+              onPointerDown={(event) => {
+                if (!editing) return;
+                event.stopPropagation();
+                dragging.current = item.id;
+                onPick(item.id);
+              }}
+            >
+              {item.kind === "desk" || item.kind === "deskCorner" ? (
+                <Workstation status={bot?.status ?? "empty"} big={item.kind === "deskCorner"} time={time} />
+              ) : item.kind === "whiteboard" ? (
+                <Whiteboard />
+              ) : item.kind === "frame" ? (
+                <Frame tint={FRAME_COLORS[index % FRAME_COLORS.length]} />
+              ) : item.kind === "cooler" ? (
+                <Cooler />
+              ) : (
+                <Piece name={item.kind} />
+              )}
+              {editing && picked === item.id ? (
+                <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.06, 0]}>
+                  <ringGeometry args={[0.42, 0.5, 28]} />
+                  <meshBasicMaterial color="#ff9f1a" />
+                </mesh>
+              ) : null}
+              {bot ? (
+                <group position={[0, 0, item.kind === "deskCorner" ? 1.15 : 0.95]}>
+                  <Blob
+                    color={bot.color}
+                    status={bot.status}
+                    reduced={reduced}
+                    label={bot.short}
+                    note={bot.note}
+                    selected={bot.id === selected}
+                    onClick={() => {
+                      if (!editing) onSelect(bot.id);
+                    }}
+                  />
+                </group>
+              ) : null}
+            </group>
+          );
+        })}
+      </group>
       <mesh position={[13.05, 1.15, 2.7]} rotation={[0, -Math.PI / 2, 0]}>
         <planeGeometry args={[0.42, 0.18]} />
         <meshStandardMaterial color="#173d28" emissive="#3ddc84" emissiveIntensity={time === "day" ? 0.4 : 1.4} toneMapped={false} />
@@ -606,7 +674,18 @@ export function OfficeScene(props: SceneProps & { fallback: ReactNode }) {
         <CameraRig sway={props.sway} tall={props.tall} />
         <Lights time={props.time} />
         <Suspense fallback={null}>
-          <Diorama view={props.view} time={props.time} selected={props.selected} reduced={props.reduced} onSelect={props.onSelect} />
+          <Diorama
+            view={props.view}
+            time={props.time}
+            selected={props.selected}
+            reduced={props.reduced}
+            editing={props.editing}
+            items={props.items}
+            picked={props.picked}
+            onSelect={props.onSelect}
+            onPick={props.onPick}
+            onItems={props.onItems}
+          />
         </Suspense>
       </Canvas>
     </SceneBoundary>

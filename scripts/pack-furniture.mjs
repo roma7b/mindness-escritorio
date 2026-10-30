@@ -40,6 +40,11 @@ const names = [
   "floorFull",
   "sideTable",
   "doorwayOpen",
+  "kitchenCoffeeMachine",
+  "cardboardBoxClosed",
+  "cardboardBoxOpen",
+  "plantSmall3",
+  "speakerSmall",
 ];
 
 const root = new Group();

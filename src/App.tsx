@@ -2,11 +2,21 @@ import "@fontsource/nunito/latin-ext-400.css";
 import "@fontsource/nunito/latin-ext-600.css";
 import "@fontsource/nunito/latin-ext-700.css";
 import "@fontsource/nunito/latin-ext-800.css";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { fetchOffice, postDecision, rememberToken } from "./api";
 import { demoState } from "./demo";
 import { FallbackRoom } from "./scene/Fallback";
 import { OfficeScene, webglAvailable } from "./scene/OfficeScene";
+import {
+  KINDS,
+  PALETTE,
+  addItem,
+  defaultLayout,
+  parseLayout,
+  removeItem,
+  rotateItem,
+  type LayoutItem,
+} from "../shared/layout";
 import {
   STATUS_META,
   ageLabel,
@@ -39,6 +49,19 @@ const ALIASES: Record<string, LightChoice> = {
   noite: "night",
 };
 
+const LAYOUT_KEY = "mindness-office-layout";
+
+function loadLayout(): LayoutItem[] {
+  try {
+    const stored = localStorage.getItem(LAYOUT_KEY);
+    const parsed = stored ? parseLayout(stored) : null;
+    if (parsed) return parsed;
+  } catch {
+    /* usa o arquivo */
+  }
+  return defaultLayout.items;
+}
+
 const LEGEND = [
   ["Trabalhando", STATUS_META.working.color],
   ["Pesquisando", STATUS_META.browsing.color],
@@ -63,6 +86,10 @@ export function App() {
   const [toast, setToast] = useState("");
   const [now, setNow] = useState(() => Date.now());
   const [tall, setTall] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [layout, setLayout] = useState<LayoutItem[]>(loadLayout);
+  const [picked, setPicked] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const reduced = useMemo(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches, []);
   const gl = useMemo(() => webglAvailable(), []);
   const view = present(catalog, office, now);
@@ -123,6 +150,31 @@ export function App() {
   }, [demo]);
 
   useEffect(() => {
+    if (recording) setEditing(false);
+  }, [recording]);
+
+  useEffect(() => {
+    localStorage.setItem(LAYOUT_KEY, JSON.stringify({ version: 1, items: layout }));
+  }, [layout]);
+
+  useEffect(() => {
+    if (!editing) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (!picked) return;
+      if (event.key === "r" || event.key === "R") {
+        setLayout((items) => rotateItem(items, picked) ?? items);
+      }
+      if (event.key === "Delete" || event.key === "Backspace") {
+        event.preventDefault();
+        setLayout((items) => removeItem(items, picked));
+        setPicked(null);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [editing, picked]);
+
+  useEffect(() => {
     if (!toast) return;
     const timer = window.setTimeout(() => setToast(""), 4200);
     return () => window.clearTimeout(timer);
@@ -163,6 +215,11 @@ export function App() {
           <Pill color={STATUS_META.idle.color} value={view.counts.idle} label="Parados" />
           <Pill color="#d7deea" value={view.counts.freeDesks} label="Mesas livres" />
         </div>
+        {!recording ? (
+          <button type="button" className={`record ${editing ? "on" : ""}`} aria-pressed={editing} onClick={() => setEditing((value) => !value)}>
+            Editar
+          </button>
+        ) : null}
         <button type="button" className={`record ${recording ? "on" : ""}`} aria-pressed={recording} onClick={() => setRecording((value) => !value)}>
           Gravação 9:16
         </button>
@@ -184,6 +241,11 @@ export function App() {
               sway={recording && !reduced}
               tall={tall || recording}
               reduced={reduced}
+              editing={editing && !recording}
+              items={layout}
+              picked={picked}
+              onPick={setPicked}
+              onItems={setLayout}
               onSelect={setSelected}
               fallback={<FallbackRoom view={view} onSelect={setSelected} />}
             />
@@ -205,6 +267,68 @@ export function App() {
             ))}
           </div>
         </div>
+        {editing && !recording ? (
+          <div className="editor">
+            <p>Arraste no chão. A grade é de 0,4 m. R gira o selecionado.</p>
+            <div className="palette">
+              {PALETTE.map((kind) => (
+                <button key={kind} type="button" onClick={() => {
+                  const next = addItem(layout, kind);
+                  if (!next) {
+                    setToast("Sem espaço livre para esse móvel.");
+                    return;
+                  }
+                  setLayout(next);
+                  setPicked(next[next.length - 1]?.id ?? null);
+                }}>
+                  {KINDS[kind].label}
+                </button>
+              ))}
+            </div>
+            <div className="editor-actions">
+              <button type="button" onClick={() => picked && setLayout((items) => rotateItem(items, picked) ?? items)}>Girar</button>
+              <button type="button" onClick={() => {
+                if (!picked) return;
+                setLayout((items) => removeItem(items, picked));
+                setPicked(null);
+              }}>Apagar</button>
+              <button type="button" onClick={() => {
+                const blob = new Blob([JSON.stringify({ version: 1, items: layout }, null, 2)], { type: "application/json" });
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = "layout.json";
+                link.click();
+                URL.revokeObjectURL(link.href);
+              }}>Exportar</button>
+              <button type="button" onClick={() => fileRef.current?.click()}>Importar</button>
+              <button type="button" onClick={() => {
+                localStorage.removeItem(LAYOUT_KEY);
+                setLayout(defaultLayout.items);
+                setPicked(null);
+              }}>Padrão</button>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="application/json"
+                hidden
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  event.target.value = "";
+                  if (!file) return;
+                  void file.text().then((text) => {
+                    const parsed = parseLayout(text);
+                    if (!parsed) {
+                      setToast("Arquivo de layout inválido.");
+                      return;
+                    }
+                    setLayout(parsed);
+                    setPicked(null);
+                  });
+                }}
+              />
+            </div>
+          </div>
+        ) : null}
         {recording ? (
           <ol className="ticker">
             {view.activity.slice(0, 3).map((item) => {
