@@ -5,6 +5,7 @@ import "@fontsource/nunito/latin-ext-800.css";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { fetchOffice, postDecision, rememberToken } from "./api";
 import { demoState } from "./demo";
+import { Avatar } from "./Avatar";
 import { FallbackRoom } from "./scene/Fallback";
 import { OfficeScene, webglAvailable } from "./scene/OfficeScene";
 import {
@@ -352,7 +353,7 @@ export function App() {
               <h3>{area.name}</h3>
               {view.bots.filter((item) => item.area === area.id).map((item) => (
                 <button key={item.id} type="button" className={`bot ${item.id === bot?.id ? "on" : ""}`} onClick={() => setSelected(item.id)}>
-                  <i style={{ background: item.color }} />
+                  <Avatar id={item.id} color={item.color} accent={item.accent} shape={item.shape} gradient={item.gradient} avatar={item.avatar} />
                   <span>
                     <strong>{item.name}</strong>
                     <small>{item.note || item.task || item.role}</small>
@@ -416,8 +417,13 @@ function Detail({ bot, now, demo, activity, onDecide }: { bot: BotView; now: num
   if (bot.areaKind === "home") {
     return (
       <>
-        <h2>{bot.name}</h2>
-        <p className="role">{bot.role}</p>
+        <header className="who">
+          <Avatar id={bot.id} color={bot.color} accent={bot.accent} shape={bot.shape} gradient={bot.gradient} avatar={bot.avatar} size={40} />
+          <div>
+            <h2>{bot.name}</h2>
+            <p className="role">{bot.role}</p>
+          </div>
+        </header>
         <p className="home-note">Este bot fica no home office e não envia status. Para dar uma mesa a ele, mude <code>area</code> e <code>reports</code> em <code>data/bots.json</code>.</p>
       </>
     );
@@ -429,7 +435,7 @@ function Detail({ bot, now, demo, activity, onDecide }: { bot: BotView; now: num
   return (
     <>
       <header className="who">
-        <i style={{ background: bot.color }} />
+        <Avatar id={bot.id} color={bot.color} accent={bot.accent} shape={bot.shape} gradient={bot.gradient} avatar={bot.avatar} size={40} />
         <div>
           <h2>{bot.name}</h2>
           <p className="role">{bot.role} · {bot.ts ? ageLabel(bot.ts, now) : "sem ping"}</p>

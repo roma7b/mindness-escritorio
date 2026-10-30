@@ -19,7 +19,7 @@ export const REPORT_STATUSES = [
 export type ReportStatus = (typeof REPORT_STATUSES)[number];
 export type EffectiveStatus = ReportStatus | "sleeping" | "home_office";
 export type AreaKind = "office" | "floor" | "home";
-export type BotMark = "crown" | "glass" | "plane" | "book" | "headset";
+export type BotShape = "round" | "square" | "drop" | "helmet";
 export type LightChoice = "now" | "day" | "evening" | "night";
 export type TimeOfDay = "day" | "evening" | "night";
 
@@ -45,7 +45,12 @@ export type Bot = {
   reports: boolean;
   color: string;
   accent: string;
-  mark?: BotMark;
+  /** round, square, drop, or helmet. The scene and the panel use the same shape. */
+  shape: BotShape;
+  /** Blends color into accent. Used by the Instagram drop. */
+  gradient?: boolean;
+  /** Public image path, shown in the team list and the detail panel. */
+  avatar?: string;
 };
 
 export type Catalog = { areas: Area[]; bots: Bot[] };

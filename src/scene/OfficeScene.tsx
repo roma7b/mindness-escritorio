@@ -1,8 +1,9 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Component, Suspense, useLayoutEffect, useMemo, useRef, type ReactNode } from "react";
-import { ACESFilmicToneMapping, CanvasTexture, type Group, type OrthographicCamera } from "three";
+import { ACESFilmicToneMapping, CanvasTexture, ExtrudeGeometry, Shape, type Group, type OrthographicCamera } from "three";
+import { RoundedBox } from "@react-three/drei";
 import { desksIn, moveItem, type LayoutItem } from "../../shared/layout";
-import { STATUS_META, type EffectiveStatus, type OfficeView, type TimeOfDay } from "../../shared/office";
+import { STATUS_META, type BotShape, type EffectiveStatus, type OfficeView, type TimeOfDay } from "../../shared/office";
 import { Piece } from "./furniture";
 
 const TILE = 1.6;
@@ -42,18 +43,18 @@ function CameraRig({ sway, tall }: { sway: boolean; tall: boolean }) {
   const base = useRef({ x: 12, y: 11, z: 12 });
   useLayoutEffect(() => {
     const aspect = size.width / Math.max(1, size.height);
-    const zoom = Math.min(size.width, size.height) / (tall || aspect < 0.9 ? 10.2 : 7.6);
-    base.current = tall ? { x: 15.2, y: 16, z: 15.2 } : { x: 15.8, y: 13.6, z: 15.8 };
+    const zoom = Math.min(size.width, size.height) / (tall || aspect < 0.9 ? 11.2 : 8.4);
+    base.current = tall ? { x: 15.2, y: 16.2, z: 15.2 } : { x: 15.8, y: 14.2, z: 15.8 };
     camera.zoom = zoom;
     camera.position.set(base.current.x, base.current.y, base.current.z);
-    camera.lookAt(5.7, 0.45, 3.3);
+    camera.lookAt(5.8, 0.8, 3.05);
     camera.updateProjectionMatrix();
   }, [camera, size.height, size.width, tall]);
   useFrame((state) => {
     if (!sway) return;
     const t = state.clock.elapsedTime;
     camera.position.x = base.current.x + Math.sin(t * 0.16) * 0.7;
-    camera.lookAt(5.7, 0.45, 3.3);
+    camera.lookAt(5.8, 0.8, 3.05);
     camera.updateProjectionMatrix();
   });
   return null;
@@ -307,8 +308,130 @@ function Workstation({
   );
 }
 
+const dropGeometry = (() => {
+  const shape = new Shape();
+  shape.moveTo(0, 0.36);
+  shape.quadraticCurveTo(0.14, 0.08, 0.22, -0.08);
+  shape.lineTo(0.16, -0.26);
+  shape.quadraticCurveTo(0, -0.3, -0.16, -0.26);
+  shape.lineTo(-0.22, -0.08);
+  shape.quadraticCurveTo(-0.14, 0.08, 0, 0.36);
+  const geometry = new ExtrudeGeometry(shape, {
+    depth: 0.28,
+    bevelEnabled: true,
+    bevelThickness: 0.03,
+    bevelSize: 0.025,
+    bevelSegments: 2,
+    curveSegments: 10,
+  });
+  geometry.center();
+  geometry.translate(0, 0.3, 0);
+  return geometry;
+})();
+
+function BodyMaterial({ color, accent, gradient }: { color: string; accent: string; gradient?: boolean }) {
+  const map = useMemo(() => {
+    if (!gradient) return null;
+    const canvas = document.createElement("canvas");
+    canvas.width = 64;
+    canvas.height = 128;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    const paint = ctx.createLinearGradient(0, 0, 64, 128);
+    paint.addColorStop(0, color);
+    paint.addColorStop(1, accent);
+    ctx.fillStyle = paint;
+    ctx.fillRect(0, 0, 64, 128);
+    const texture = new CanvasTexture(canvas);
+    texture.needsUpdate = true;
+    return texture;
+  }, [accent, color, gradient]);
+  return <meshStandardMaterial color={gradient ? "#ffffff" : color} map={map ?? undefined} roughness={0.42} />;
+}
+
+function Eyes({ y, z, closed, color = "#fffaf4" }: { y: number; z: number; closed: boolean; color?: string }) {
+  const glow = color !== "#fffaf4";
+  return (
+    <group position={[0, y, z]}>
+      {[-1, 1].map((side) => (
+        <mesh key={side} position={[side * (glow ? 0.08 : 0.07), 0, 0]} scale={[glow ? 1.7 : 1.45, closed ? 0.18 : glow ? 0.85 : 0.62, 0.45]}>
+          <sphereGeometry args={[glow ? 0.048 : 0.038, 16, 12]} />
+          <meshStandardMaterial color={color} emissive={color} emissiveIntensity={glow ? 2.4 : 0.25} toneMapped={!glow} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function CharacterBody({ shape, color, accent, gradient, closed }: { shape: BotShape; color: string; accent: string; gradient?: boolean; closed: boolean }) {
+  if (shape === "helmet") {
+    return (
+      <group>
+        <mesh position={[0, 0.36, 0]} castShadow>
+          <sphereGeometry args={[0.22, 32, 24]} />
+          <meshStandardMaterial color="#141414" metalness={0.72} roughness={0.28} />
+        </mesh>
+        <mesh position={[0, 0.4, 0.06]} castShadow>
+          <boxGeometry args={[0.38, 0.1, 0.2]} />
+          <meshStandardMaterial color="#0c0c0c" metalness={0.8} roughness={0.22} />
+        </mesh>
+        <mesh position={[0, 0.54, 0.02]} rotation={[0.15, 0, 0]} castShadow>
+          <cylinderGeometry args={[0.3, 0.3, 0.025, 28]} />
+          <meshStandardMaterial color="#1a1a1a" metalness={0.55} roughness={0.4} />
+        </mesh>
+        <mesh position={[0, 0.66, -0.02]} castShadow>
+          <cylinderGeometry args={[0.16, 0.18, 0.18, 24]} />
+          <meshStandardMaterial color="#121212" metalness={0.5} roughness={0.42} />
+        </mesh>
+        <mesh position={[0, 0.58, 0]}>
+          <cylinderGeometry args={[0.185, 0.185, 0.028, 24]} />
+          <meshStandardMaterial color="#8b1530" roughness={0.45} />
+        </mesh>
+        <mesh position={[0.16, 0.7, -0.02]} rotation={[0.4, 0, -0.5]}>
+          <boxGeometry args={[0.02, 0.16, 0.04]} />
+          <meshStandardMaterial color="#d7b56a" metalness={0.6} roughness={0.35} />
+        </mesh>
+        <Eyes y={0.42} z={0.24} closed={closed} color="#ff2a2a" />
+      </group>
+    );
+  }
+  const eyes = <Eyes y={shape === "square" ? 0.32 : shape === "drop" ? 0.34 : 0.4} z={shape === "drop" ? 0.18 : 0.2} closed={closed} />;
+  if (shape === "square") {
+    return (
+      <group>
+        <RoundedBox args={[0.44, 0.4, 0.36]} radius={0.12} smoothness={4} position={[0, 0.28, 0]} castShadow>
+          <BodyMaterial color={color} accent={accent} gradient={gradient} />
+        </RoundedBox>
+        {eyes}
+      </group>
+    );
+  }
+  if (shape === "drop") {
+    return (
+      <group>
+        <mesh geometry={dropGeometry} castShadow>
+          <BodyMaterial color={color} accent={accent} gradient={gradient} />
+        </mesh>
+        {eyes}
+      </group>
+    );
+  }
+  return (
+    <group>
+      <mesh position={[0, 0.34, 0]} scale={[1, 1.08, 0.92]} castShadow>
+        <sphereGeometry args={[0.22, 32, 24]} />
+        <BodyMaterial color={color} accent={accent} gradient={gradient} />
+      </mesh>
+      {eyes}
+    </group>
+  );
+}
+
 function Blob({
   color,
+  accent,
+  shape = "round",
+  gradient,
   status,
   reduced,
   label,
@@ -317,6 +440,9 @@ function Blob({
   onClick,
 }: {
   color: string;
+  accent: string;
+  shape?: BotShape;
+  gradient?: boolean;
   status: EffectiveStatus;
   reduced: boolean;
   label?: string;
@@ -348,6 +474,7 @@ function Blob({
     group.rotation.z = busy ? Math.sin(t * 7) * 0.1 : 0;
   });
   const closed = status === "sleeping";
+  const crown = shape === "helmet" ? 1.02 : 0.78;
   return (
     <group ref={ref} onClick={(event) => { event.stopPropagation(); onClick(); }}>
       {selected ? (
@@ -356,41 +483,18 @@ function Blob({
           <meshBasicMaterial color="#ff9f1a" />
         </mesh>
       ) : null}
-      <mesh position={[0, 0.34, 0]} scale={[1, 1.2, 0.92]} castShadow>
-        <sphereGeometry args={[0.22, 32, 24]} />
-        <meshStandardMaterial color={color} roughness={0.42} />
-      </mesh>
-      <mesh position={[-0.07, 0.4, 0.16]} scale={closed ? [1, 0.2, 1] : [1, 1, 1]}>
-        <sphereGeometry args={[0.045, 16, 12]} />
-        <meshStandardMaterial color="#fffaf4" />
-      </mesh>
-      <mesh position={[0.07, 0.4, 0.16]} scale={closed ? [1, 0.2, 1] : [1, 1, 1]}>
-        <sphereGeometry args={[0.045, 16, 12]} />
-        <meshStandardMaterial color="#fffaf4" />
-      </mesh>
-      {!closed ? (
-        <>
-          <mesh position={[-0.07, 0.395, 0.195]}>
-            <sphereGeometry args={[0.02, 12, 10]} />
-            <meshStandardMaterial color="#241820" />
-          </mesh>
-          <mesh position={[0.07, 0.395, 0.195]}>
-            <sphereGeometry args={[0.02, 12, 10]} />
-            <meshStandardMaterial color="#241820" />
-          </mesh>
-        </>
-      ) : null}
-      {label ? <SpriteLabel text={label} position={[0, 0.78, 0]} scale={[0.72, 0.22, 1]} ink="#ffffff" /> : null}
+      <CharacterBody shape={shape} color={color} accent={accent} gradient={gradient} closed={closed} />
+      {label ? <SpriteLabel text={label} position={[0, crown, 0]} scale={[0.72, 0.22, 1]} ink="#ffffff" /> : null}
       {status === "needs_you" ? (
         <SpriteLabel
           text={[label ?? "", ...wrapLines(note || "Precisa de um ok")].join("\n")}
-          position={[0.15, 1.25, 0]}
+          position={[0.15, crown + 0.42, 0]}
           scale={[1.9, 0.42 + wrapLines(note || "Precisa de um ok").length * 0.16, 1]}
           fill="#fff6df"
           ink="#2a2116"
         />
       ) : null}
-      {status === "sleeping" ? <SpriteLabel text="z z z" position={[0.28, 0.78, 0]} scale={[0.55, 0.2, 1]} ink="#d5def8" /> : null}
+      {status === "sleeping" ? <SpriteLabel text="z z z" position={[0.28, crown, 0]} scale={[0.55, 0.2, 1]} ink="#d5def8" /> : null}
     </group>
   );
 }
@@ -531,9 +635,12 @@ function Diorama({
                 </mesh>
               ) : null}
               {bot ? (
-                <group position={[0, 0, item.kind === "deskCorner" ? 1.15 : 0.95]}>
+                <group position={[0, bot.shape === "helmet" ? 0.18 : 0, item.kind === "deskCorner" ? 1.65 : 0.95]}>
                   <Blob
                     color={bot.color}
+                    accent={bot.accent}
+                    shape={bot.shape}
+                    gradient={bot.gradient}
                     status={bot.status}
                     reduced={reduced}
                     label={bot.short}
@@ -582,7 +689,7 @@ function Diorama({
               <meshStandardMaterial color={lamps ? "#ffd27a" : "#b9d7ee"} emissive={lamps ? "#ffb15a" : "#000000"} emissiveIntensity={lamps ? 0.7 : 0} />
             </mesh>
             <group position={[-0.05, 0, 0.38]} scale={0.62}>
-              <Blob color={bot.color} status="home_office" reduced={reduced} label={bot.id === selected ? bot.short : undefined} selected={bot.id === selected} onClick={() => onSelect(bot.id)} />
+              <Blob color={bot.color} accent={bot.accent} shape={bot.shape} gradient={bot.gradient} status="home_office" reduced={reduced} label={bot.id === selected ? bot.short : undefined} selected={bot.id === selected} onClick={() => onSelect(bot.id)} />
             </group>
           </group>
         );

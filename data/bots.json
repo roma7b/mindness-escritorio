@@ -37,9 +37,10 @@
       "role": "Coordena a operação",
       "area": "chief",
       "reports": true,
-      "color": "#e2b657",
-      "accent": "#8a5a2b",
-      "mark": "crown"
+      "color": "#141418",
+      "accent": "#ff2a2a",
+      "shape": "helmet",
+      "avatar": "/avatars/chief.svg"
     },
     {
       "id": "caca-leads-social",
@@ -48,9 +49,9 @@
       "role": "Acha perfis e listas",
       "area": "prospeccao",
       "reports": true,
-      "color": "#ff7a59",
-      "accent": "#7a2e22",
-      "mark": "glass"
+      "color": "#3ddc4e",
+      "accent": "#178a28",
+      "shape": "square"
     },
     {
       "id": "agente-outbound",
@@ -59,9 +60,9 @@
       "role": "Monta a fila de disparos",
       "area": "prospeccao",
       "reports": true,
-      "color": "#3dbea5",
-      "accent": "#14574c",
-      "mark": "plane"
+      "color": "#3b82f6",
+      "accent": "#1d4ed8",
+      "shape": "round"
     },
     {
       "id": "pesquisa",
@@ -70,9 +71,9 @@
       "role": "Mapeia dores e nichos",
       "area": "prospeccao",
       "reports": true,
-      "color": "#8b7cf7",
-      "accent": "#3a2e86",
-      "mark": "book"
+      "color": "#f472b6",
+      "accent": "#be185d",
+      "shape": "square"
     },
     {
       "id": "copiloto-atendimento",
@@ -81,9 +82,9 @@
       "role": "Apoia a conversa com o lead",
       "area": "prospeccao",
       "reports": true,
-      "color": "#5bba6f",
-      "accent": "#1e5a32",
-      "mark": "headset"
+      "color": "#a855f7",
+      "accent": "#6d28d9",
+      "shape": "round"
     },
     {
       "id": "pain-radar",
@@ -92,8 +93,9 @@
       "role": "Sinais de dor no mercado",
       "area": "home",
       "reports": false,
-      "color": "#d97b4a",
-      "accent": "#6a3a22"
+      "color": "#14b8a6",
+      "accent": "#0f766e",
+      "shape": "round"
     },
     {
       "id": "oferta-narrativa",
@@ -102,8 +104,9 @@
       "role": "Oferta e texto",
       "area": "home",
       "reports": false,
-      "color": "#d45d6b",
-      "accent": "#6e2430"
+      "color": "#fb7185",
+      "accent": "#be123c",
+      "shape": "drop"
     },
     {
       "id": "google-meu-negocio",
@@ -112,8 +115,9 @@
       "role": "Ficha do Google",
       "area": "home",
       "reports": false,
-      "color": "#7aa2d4",
-      "accent": "#2c4e78"
+      "color": "#ff8a1a",
+      "accent": "#c2410c",
+      "shape": "round"
     },
     {
       "id": "conteudo-x-linkedin",
@@ -122,8 +126,9 @@
       "role": "Posts no X e no LinkedIn",
       "area": "home",
       "reports": false,
-      "color": "#c9a227",
-      "accent": "#6a5410"
+      "color": "#34d399",
+      "accent": "#047857",
+      "shape": "round"
     },
     {
       "id": "comunidade-destino-pt",
@@ -132,8 +137,9 @@
       "role": "Comunidade",
       "area": "home",
       "reports": false,
-      "color": "#6aaf8a",
-      "accent": "#24543c"
+      "color": "#c4a574",
+      "accent": "#8a6a3b",
+      "shape": "square"
     },
     {
       "id": "sparring-ideias",
@@ -142,8 +148,9 @@
       "role": "Debate de ideias",
       "area": "home",
       "reports": false,
-      "color": "#b07cc6",
-      "accent": "#5a3470"
+      "color": "#a1623a",
+      "accent": "#6b3e22",
+      "shape": "drop"
     },
     {
       "id": "diagnostico",
@@ -152,8 +159,9 @@
       "role": "Diagnóstico do negócio",
       "area": "home",
       "reports": false,
-      "color": "#e09a3e",
-      "accent": "#7a4e12"
+      "color": "#facc15",
+      "accent": "#a16207",
+      "shape": "round"
     },
     {
       "id": "conteudo-instagram",
@@ -162,8 +170,10 @@
       "role": "Posts do Instagram",
       "area": "home",
       "reports": false,
-      "color": "#c46b8a",
-      "accent": "#6a2c48"
+      "color": "#c084fc",
+      "accent": "#6366f1",
+      "shape": "drop",
+      "gradient": true
     },
     {
       "id": "conteudo-video",
@@ -172,8 +182,9 @@
       "role": "Roteiro e vídeo",
       "area": "home",
       "reports": false,
-      "color": "#5eaaa8",
-      "accent": "#1e5554"
+      "color": "#818cf8",
+      "accent": "#4338ca",
+      "shape": "square"
     },
     {
       "id": "sequencer",
@@ -182,8 +193,9 @@
       "role": "Sequência de mensagens",
       "area": "home",
       "reports": false,
-      "color": "#c47d6a",
-      "accent": "#6a3a2e"
+      "color": "#f5b42a",
+      "accent": "#b45309",
+      "shape": "square"
     },
     {
       "id": "ops-crm",
@@ -192,8 +204,9 @@
       "role": "CRM e operação",
       "area": "home",
       "reports": false,
-      "color": "#8d8f4a",
-      "accent": "#454718"
+      "color": "#94a3b8",
+      "accent": "#475569",
+      "shape": "square"
     },
     {
       "id": "radar-x",
@@ -202,8 +215,9 @@
       "role": "Monitora o X",
       "area": "home",
       "reports": false,
-      "color": "#6d8cae",
-      "accent": "#2c405c"
+      "color": "#2ad4c8",
+      "accent": "#0f766e",
+      "shape": "drop"
     },
     {
       "id": "conteudo-mindness",
@@ -212,8 +226,9 @@
       "role": "Canal @Mindness",
       "area": "home",
       "reports": false,
-      "color": "#a88b6a",
-      "accent": "#5a4632"
+      "color": "#e879f9",
+      "accent": "#a21caf",
+      "shape": "round"
     }
   ]
 }

@@ -24,6 +24,8 @@ Para trazer alguém do home office para uma mesa, mude o bot no JSON:
 
 A ordem no array define a mesa: o primeiro bot da área senta na primeira mesa. Uma área nova é um objeto em `areas` mais os bots apontando para o `id` dela.
 
+Cada bot tem `color`, `accent` e `shape`: `round`, `square`, `drop` ou `helmet`. O mesmo desenho aparece na sala, na lista do time e no painel. `gradient: true` mistura `color` em `accent`. `avatar` é um caminho público opcional, como `/avatars/chief.svg`, e substitui o ícone do painel.
+
 Os móveis moram em [`data/layout.json`](data/layout.json), e a cena abre esse arquivo. O botão **Editar** arrasta cada peça na grade de 0,4 m, gira com R ou com **Girar**, apaga e acrescenta itens do kit sem deixar um móvel em cima do outro nem na frente da janela. O navegador guarda a última edição. **Exportar** baixa um `layout.json` para substituir o arquivo do repositório; **Importar** lê um arquivo; **Padrão** descarta a edição local. Na gravação 9:16 esses controles ficam escondidos.
 
 ## O que cada status significa
