@@ -635,7 +635,7 @@ function Diorama({
                 </mesh>
               ) : null}
               {bot ? (
-                <group position={[0, bot.shape === "helmet" ? 0.18 : 0, item.kind === "deskCorner" ? 1.65 : 0.95]}>
+                <group position={[0, bot.shape === "helmet" ? 0.04 : 0, item.kind === "deskCorner" ? 1.05 : 0.95]}>
                   <Blob
                     color={bot.color}
                     accent={bot.accent}
