@@ -666,7 +666,6 @@ function Diorama({
               {bot ? (
                 <group
                   position={item.kind === "deskCorner" ? [0.18, 0.16, -0.32] : [0, 0, 0.95]}
-                  rotation={item.kind === "deskCorner" ? [0, Math.PI, 0] : [0, 0, 0]}
                 >
                   <Blob
                     color={bot.color}
