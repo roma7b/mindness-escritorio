@@ -318,19 +318,22 @@ function Workstation({
       />
       <Piece
         name="computerScreen"
-        position={big ? [0.15, top, 0.28] : [0.05, 0, -0.12]}
+        position={big ? [0.15, top, 0.22] : [0.05, 0, -0.12]}
+        rotation={big ? [0, Math.PI, 0] : [0, 0, 0]}
         scale={big ? 0.9 : 1}
       />
       <Piece
         name="computerKeyboard"
-        position={big ? [0.15, top, 0.08] : [0.05, 0, 0.16]}
+        position={big ? [0.15, top, 0.02] : [0.05, 0, 0.16]}
+        rotation={big ? [0, Math.PI, 0] : [0, 0, 0]}
         scale={0.75}
       />
       {big ? <Piece name="lampRoundTable" position={[-0.22, top, 0.5]} scale={0.5} /> : <Piece name="laptop" position={[-0.34, 0, 0.12]} scale={0.85} />}
       {big ? <Piece name="books" position={[-0.05, top, 0.42]} rotation={[0, 0.5, 0]} scale={1} /> : null}
       <Mug position={big ? [0.42, top, 0.42] : [0.42, 0.66, 0.18]} />
       <Screen
-        position={big ? [0.15, top + 0.26, 0.36] : [0.02, 0.92, 0.05]}
+        position={big ? [0.15, top + 0.26, 0.14] : [0.02, 0.92, 0.05]}
+        rotation={big ? [0, Math.PI, 0] : [0, 0, 0]}
         size={big ? [0.26, 0.16] : [0.46, 0.3]}
         status={status}
         time={time}
