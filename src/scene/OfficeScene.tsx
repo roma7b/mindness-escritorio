@@ -310,6 +310,7 @@ function Workstation({
       <Piece
         name="chairDesk"
         position={big ? [0.18, 0, -0.32] : [0, 0, 0.62]}
+        rotation={big ? [0, Math.PI, 0] : [0, 0, 0]}
         scale={big ? 1.05 : 0.92}
       />
       <Piece
@@ -665,6 +666,7 @@ function Diorama({
               {bot ? (
                 <group
                   position={item.kind === "deskCorner" ? [0.18, 0.16, -0.32] : [0, 0, 0.95]}
+                  rotation={item.kind === "deskCorner" ? [0, Math.PI, 0] : [0, 0, 0]}
                 >
                   <Blob
                     color={bot.color}
