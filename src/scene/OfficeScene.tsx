@@ -304,6 +304,7 @@ function Workstation({
   time: TimeOfDay;
 }) {
   const scale = big ? 1.12 : 1;
+  const top = 0.58;
   return (
     <group>
       <Piece name={big ? "deskCorner" : "desk"} scale={scale} />
@@ -315,21 +316,19 @@ function Workstation({
       />
       <Piece
         name="computerScreen"
-        position={big ? [0.12, 0, -0.62] : [0.05, 0, -0.12]}
-        rotation={big ? [0, Math.PI, 0] : [0, 0, 0]}
-        scale={big ? 1.2 : 1}
+        position={big ? [0.15, top, 0.28] : [0.05, 0, -0.12]}
+        scale={big ? 0.9 : 1}
       />
       <Piece
         name="computerKeyboard"
-        position={big ? [0.14, 0, -0.48] : [0.05, 0, 0.16]}
-        rotation={big ? [0, Math.PI, 0] : [0, 0, 0]}
-        scale={0.9}
+        position={big ? [0.15, top, 0.08] : [0.05, 0, 0.16]}
+        scale={0.75}
       />
-      {big ? null : <Piece name="laptop" position={[-0.34, 0, 0.12]} scale={0.85} />}
-      <Mug position={big ? [-0.45, 0.66, -0.58] : [0.42, 0.66, 0.18]} />
+      {big ? <Piece name="lampRoundTable" position={[-0.22, top, 0.5]} scale={0.5} /> : <Piece name="laptop" position={[-0.34, 0, 0.12]} scale={0.85} />}
+      {big ? <Piece name="books" position={[-0.05, top, 0.42]} rotation={[0, 0.5, 0]} scale={1} /> : null}
+      <Mug position={big ? [0.42, top, 0.42] : [0.42, 0.66, 0.18]} />
       <Screen
-        position={big ? [0.12, 0.78, -0.58] : [0.02, 0.92, 0.05]}
-        rotation={big ? [0, Math.PI, 0] : [0, 0, 0]}
+        position={big ? [0.15, top + 0.3, 0.34] : [0.02, 0.92, 0.05]}
         status={status}
         time={time}
       />
