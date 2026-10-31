@@ -266,11 +266,13 @@ function SkyWindows({ origin, cols, time }: { origin: [number, number]; cols: nu
 function Screen({
   position,
   rotation = [0, 0, 0],
+  size = [0.46, 0.3],
   status,
   time,
 }: {
   position: [number, number, number];
   rotation?: [number, number, number];
+  size?: [number, number];
   status: EffectiveStatus | "empty";
   time: TimeOfDay;
 }) {
@@ -279,7 +281,7 @@ function Screen({
   const intensity = status === "empty" || status === "sleeping" ? 0.08 : night;
   return (
     <mesh position={position} rotation={rotation}>
-      <planeGeometry args={[0.46, 0.3]} />
+      <planeGeometry args={size} />
       <meshStandardMaterial color={color} emissive={color} emissiveIntensity={intensity} toneMapped={false} />
     </mesh>
   );
@@ -328,7 +330,8 @@ function Workstation({
       {big ? <Piece name="books" position={[-0.05, top, 0.42]} rotation={[0, 0.5, 0]} scale={1} /> : null}
       <Mug position={big ? [0.42, top, 0.42] : [0.42, 0.66, 0.18]} />
       <Screen
-        position={big ? [0.15, top + 0.3, 0.34] : [0.02, 0.92, 0.05]}
+        position={big ? [0.15, top + 0.26, 0.36] : [0.02, 0.92, 0.05]}
+        size={big ? [0.26, 0.16] : [0.46, 0.3]}
         status={status}
         time={time}
       />
