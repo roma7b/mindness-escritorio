@@ -306,35 +306,35 @@ function Workstation({
   time: TimeOfDay;
 }) {
   const scale = big ? 1.12 : 1;
-  const top = 0.58;
+  const top = big ? 0.58 : 0.5;
   return (
     <group>
       <Piece name={big ? "deskCorner" : "desk"} scale={scale} />
       <Piece
         name="chairDesk"
-        position={big ? [0.18, 0, -0.32] : [0, 0, 0.62]}
+        position={big ? [0.18, 0, -0.32] : [0, 0, 0.5]}
         rotation={big ? [0, Math.PI, 0] : [0, 0, 0]}
         scale={big ? 1.05 : 0.92}
       />
       <Piece
         name="computerScreen"
-        position={big ? [0.15, top, 0.22] : [0.05, 0, -0.12]}
+        position={big ? [0.15, top, 0.22] : [0.02, top, -0.02]}
         rotation={big ? [0, Math.PI, 0] : [0, 0, 0]}
-        scale={big ? 0.9 : 1}
+        scale={big ? 0.9 : 0.85}
       />
       <Piece
         name="computerKeyboard"
-        position={big ? [0.15, top, 0.02] : [0.05, 0, 0.16]}
+        position={big ? [0.15, top, 0.02] : [0.02, top, 0.14]}
         rotation={big ? [0, Math.PI, 0] : [0, 0, 0]}
-        scale={0.75}
+        scale={0.7}
       />
       {big ? <Piece name="lampRoundTable" position={[-0.22, top, 0.5]} scale={0.5} /> : <Piece name="laptop" position={[-0.34, 0, 0.12]} scale={0.85} />}
       {big ? <Piece name="books" position={[-0.05, top, 0.42]} rotation={[0, 0.5, 0]} scale={1} /> : null}
-      <Mug position={big ? [0.42, top, 0.42] : [0.42, 0.66, 0.18]} />
+      <Mug position={big ? [0.42, top, 0.42] : [0.28, top, 0.02]} />
       <Screen
-        position={big ? [0.15, top + 0.26, 0.14] : [0.02, 0.92, 0.05]}
+        position={big ? [0.15, top + 0.26, 0.14] : [0.02, top + 0.24, 0.05]}
         rotation={big ? [0, Math.PI, 0] : [0, 0, 0]}
-        size={big ? [0.26, 0.16] : [0.46, 0.3]}
+        size={big ? [0.26, 0.16] : [0.26, 0.15]}
         status={status}
         time={time}
       />
@@ -670,7 +670,8 @@ function Diorama({
               ) : null}
               {bot ? (
                 <group
-                  position={item.kind === "deskCorner" ? [0.18, 0.16, -0.32] : [0, 0, 0.95]}
+                  position={item.kind === "deskCorner" ? [0.18, 0.16, -0.32] : [0, 0.12, 0.46]}
+                  rotation={item.kind === "deskCorner" ? [0, 0, 0] : [0, Math.PI, 0]}
                 >
                   <Blob
                     color={bot.color}
