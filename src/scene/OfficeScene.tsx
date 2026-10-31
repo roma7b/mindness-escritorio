@@ -263,12 +263,22 @@ function SkyWindows({ origin, cols, time }: { origin: [number, number]; cols: nu
   );
 }
 
-function Screen({ position, status, time }: { position: [number, number, number]; status: EffectiveStatus | "empty"; time: TimeOfDay }) {
+function Screen({
+  position,
+  rotation = [0, 0, 0],
+  status,
+  time,
+}: {
+  position: [number, number, number];
+  rotation?: [number, number, number];
+  status: EffectiveStatus | "empty";
+  time: TimeOfDay;
+}) {
   const color = status === "empty" ? "#1c2433" : STATUS_META[status].color;
   const night = time === "night" ? 2.4 : time === "evening" ? 1.35 : 0.55;
   const intensity = status === "empty" || status === "sleeping" ? 0.08 : night;
   return (
-    <mesh position={position}>
+    <mesh position={position} rotation={rotation}>
       <planeGeometry args={[0.46, 0.3]} />
       <meshStandardMaterial color={color} emissive={color} emissiveIntensity={intensity} toneMapped={false} />
     </mesh>
@@ -297,13 +307,31 @@ function Workstation({
   return (
     <group>
       <Piece name={big ? "deskCorner" : "desk"} scale={scale} />
-      <Piece name="chairDesk" position={[0, 0, big ? 0.85 : 0.62]} scale={big ? 1.05 : 0.92} />
-      <Piece name="computerScreen" position={[big ? 0.15 : 0.05, 0, big ? -0.15 : -0.12]} scale={big ? 1.15 : 1} />
-      {big ? <Piece name="computerScreen" position={[-0.55, 0, -0.1]} scale={0.9} /> : null}
-      <Piece name="computerKeyboard" position={[0.05, 0, 0.16]} scale={0.9} />
-      <Piece name="laptop" position={[-0.34, 0, 0.12]} scale={0.85} />
-      <Mug position={[big ? 0.55 : 0.42, 0.66, 0.18]} />
-      <Screen position={[0.02, big ? 1.05 : 0.92, 0.05]} status={status} time={time} />
+      <Piece
+        name="chairDesk"
+        position={big ? [0.18, 0, -0.32] : [0, 0, 0.62]}
+        scale={big ? 1.05 : 0.92}
+      />
+      <Piece
+        name="computerScreen"
+        position={big ? [0.12, 0, -0.62] : [0.05, 0, -0.12]}
+        rotation={big ? [0, Math.PI, 0] : [0, 0, 0]}
+        scale={big ? 1.2 : 1}
+      />
+      <Piece
+        name="computerKeyboard"
+        position={big ? [0.14, 0, -0.48] : [0.05, 0, 0.16]}
+        rotation={big ? [0, Math.PI, 0] : [0, 0, 0]}
+        scale={0.9}
+      />
+      {big ? null : <Piece name="laptop" position={[-0.34, 0, 0.12]} scale={0.85} />}
+      <Mug position={big ? [-0.45, 0.66, -0.58] : [0.42, 0.66, 0.18]} />
+      <Screen
+        position={big ? [0.12, 0.78, -0.58] : [0.02, 0.92, 0.05]}
+        rotation={big ? [0, Math.PI, 0] : [0, 0, 0]}
+        status={status}
+        time={time}
+      />
     </group>
   );
 }
@@ -635,7 +663,9 @@ function Diorama({
                 </mesh>
               ) : null}
               {bot ? (
-                <group position={[0, bot.shape === "helmet" ? 0.36 : 0, item.kind === "deskCorner" ? 0.98 : 0.95]}>
+                <group
+                  position={item.kind === "deskCorner" ? [0.18, 0.16, -0.32] : [0, 0, 0.95]}
+                >
                   <Blob
                     color={bot.color}
                     accent={bot.accent}
