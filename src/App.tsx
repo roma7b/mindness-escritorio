@@ -101,9 +101,23 @@ export function App() {
   }, [params]);
 
   useEffect(() => {
+    if (demo) return;
     const tick = window.setInterval(() => setNow(Date.now()), 30_000);
     return () => window.clearInterval(tick);
-  }, []);
+  }, [demo]);
+
+  useEffect(() => {
+    if (!demo) return;
+    const started = Date.now();
+    const play = () => {
+      const t = Date.now();
+      setNow(t);
+      setOffice(demoState(t, (t - started) / 1000));
+    };
+    play();
+    const timer = window.setInterval(play, 1000);
+    return () => window.clearInterval(timer);
+  }, [demo]);
 
   useEffect(() => {
     const stage = document.querySelector(".viewport");
