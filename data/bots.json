@@ -1,0 +1,234 @@
+{
+  "areas": [
+    {
+      "id": "chief",
+      "name": "Chief of Staff",
+      "kind": "office",
+      "capacity": 1,
+      "blurb": "Sala privada do bot principal.",
+      "windows": [2],
+      "grid": { "x": 11, "y": 0, "w": 6, "d": 6 },
+      "gridPortrait": { "x": 1, "y": 0, "w": 6, "d": 5 }
+    },
+    {
+      "id": "prospeccao",
+      "name": "Prospecção",
+      "kind": "floor",
+      "capacity": 6,
+      "blurb": "Área que reporta status. Duas mesas seguem livres.",
+      "windows": [2, 6],
+      "grid": { "x": 0, "y": 0, "w": 9, "d": 7 },
+      "gridPortrait": { "x": 0, "y": 6, "w": 9, "d": 7 }
+    },
+    {
+      "id": "home",
+      "name": "Home office",
+      "kind": "home",
+      "blurb": "Não enviam ping. Para trazer alguém para uma sala, mude area e reports em data/bots.json.",
+      "grid": { "x": 0, "y": 9, "w": 16, "d": 5 },
+      "gridPortrait": { "x": 0, "y": 14, "w": 9, "d": 9 }
+    }
+  ],
+  "bots": [
+    {
+      "id": "chief-of-staff",
+      "name": "Chief of Staff · Mindness",
+      "short": "Chief",
+      "role": "Coordena a operação",
+      "area": "chief",
+      "reports": true,
+      "color": "#141418",
+      "accent": "#ff2a2a",
+      "shape": "helmet",
+      "avatar": "/avatars/chief.svg"
+    },
+    {
+      "id": "caca-leads-social",
+      "name": "Caça Leads Social",
+      "short": "Caça Leads",
+      "role": "Acha perfis e listas",
+      "area": "prospeccao",
+      "reports": true,
+      "color": "#3ddc4e",
+      "accent": "#178a28",
+      "shape": "square"
+    },
+    {
+      "id": "agente-outbound",
+      "name": "Agente Outbound Mindness",
+      "short": "Outbound",
+      "role": "Monta a fila de disparos",
+      "area": "prospeccao",
+      "reports": true,
+      "color": "#3b82f6",
+      "accent": "#1d4ed8",
+      "shape": "round"
+    },
+    {
+      "id": "pesquisa",
+      "name": "Pesquisa · Mindness",
+      "short": "Pesquisa",
+      "role": "Mapeia dores e nichos",
+      "area": "prospeccao",
+      "reports": true,
+      "color": "#f472b6",
+      "accent": "#be185d",
+      "shape": "square"
+    },
+    {
+      "id": "copiloto-atendimento",
+      "name": "Copiloto de Atendimento · Mindness",
+      "short": "Copiloto",
+      "role": "Apoia a conversa com o lead",
+      "area": "prospeccao",
+      "reports": true,
+      "color": "#a855f7",
+      "accent": "#6d28d9",
+      "shape": "round"
+    },
+    {
+      "id": "pain-radar",
+      "name": "Pain Radar",
+      "short": "Pain Radar",
+      "role": "Sinais de dor no mercado",
+      "area": "home",
+      "reports": false,
+      "color": "#14b8a6",
+      "accent": "#0f766e",
+      "shape": "round"
+    },
+    {
+      "id": "oferta-narrativa",
+      "name": "Oferta & Narrativa",
+      "short": "Oferta",
+      "role": "Oferta e texto",
+      "area": "home",
+      "reports": false,
+      "color": "#fb7185",
+      "accent": "#be123c",
+      "shape": "drop"
+    },
+    {
+      "id": "google-meu-negocio",
+      "name": "Google Meu Negócio",
+      "short": "Meu Negócio",
+      "role": "Ficha do Google",
+      "area": "home",
+      "reports": false,
+      "color": "#ff8a1a",
+      "accent": "#c2410c",
+      "shape": "round"
+    },
+    {
+      "id": "conteudo-x-linkedin",
+      "name": "Conteúdo X/Linkedin",
+      "short": "X/LinkedIn",
+      "role": "Posts no X e no LinkedIn",
+      "area": "home",
+      "reports": false,
+      "color": "#34d399",
+      "accent": "#047857",
+      "shape": "round"
+    },
+    {
+      "id": "comunidade-destino-pt",
+      "name": "Comunidade Destino PT",
+      "short": "Destino PT",
+      "role": "Comunidade",
+      "area": "home",
+      "reports": false,
+      "color": "#c4a574",
+      "accent": "#8a6a3b",
+      "shape": "square"
+    },
+    {
+      "id": "sparring-ideias",
+      "name": "Sparring de Ideias",
+      "short": "Sparring",
+      "role": "Debate de ideias",
+      "area": "home",
+      "reports": false,
+      "color": "#a1623a",
+      "accent": "#6b3e22",
+      "shape": "drop"
+    },
+    {
+      "id": "diagnostico",
+      "name": "Diagnóstico",
+      "short": "Diagnóstico",
+      "role": "Diagnóstico do negócio",
+      "area": "home",
+      "reports": false,
+      "color": "#facc15",
+      "accent": "#a16207",
+      "shape": "round"
+    },
+    {
+      "id": "conteudo-instagram",
+      "name": "Conteúdo Instagram",
+      "short": "Instagram",
+      "role": "Posts do Instagram",
+      "area": "home",
+      "reports": false,
+      "color": "#c084fc",
+      "accent": "#6366f1",
+      "shape": "drop",
+      "gradient": true
+    },
+    {
+      "id": "conteudo-video",
+      "name": "Conteúdo Video",
+      "short": "Vídeo",
+      "role": "Roteiro e vídeo",
+      "area": "home",
+      "reports": false,
+      "color": "#818cf8",
+      "accent": "#4338ca",
+      "shape": "square"
+    },
+    {
+      "id": "sequencer",
+      "name": "Sequencer",
+      "short": "Sequencer",
+      "role": "Sequência de mensagens",
+      "area": "home",
+      "reports": false,
+      "color": "#f5b42a",
+      "accent": "#b45309",
+      "shape": "square"
+    },
+    {
+      "id": "ops-crm",
+      "name": "Ops CRM",
+      "short": "Ops CRM",
+      "role": "CRM e operação",
+      "area": "home",
+      "reports": false,
+      "color": "#94a3b8",
+      "accent": "#475569",
+      "shape": "square"
+    },
+    {
+      "id": "radar-x",
+      "name": "Radar X",
+      "short": "Radar X",
+      "role": "Monitora o X",
+      "area": "home",
+      "reports": false,
+      "color": "#2ad4c8",
+      "accent": "#0f766e",
+      "shape": "drop"
+    },
+    {
+      "id": "conteudo-mindness",
+      "name": "Conteúdo @Mindness",
+      "short": "@Mindness",
+      "role": "Canal @Mindness",
+      "area": "home",
+      "reports": false,
+      "color": "#e879f9",
+      "accent": "#a21caf",
+      "shape": "round"
+    }
+  ]
+}

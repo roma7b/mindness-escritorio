@@ -1,0 +1,3 @@
+# Copie para .dev.vars (não commitado). O wrangler pages dev lê este arquivo.
+OFFICE_TOKEN=dev-office-token
+VIEW_TOKEN=dev-view-token
